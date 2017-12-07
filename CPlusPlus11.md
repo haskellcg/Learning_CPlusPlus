@@ -57,7 +57,11 @@
   
   Before C++11, the value of variables could be used in constant expressions only if the variables are declared const, have an initializer which is a constant expression, and are of integral or enumeration type. C++11 removes the restriction that the variables must be of integral or enumeration type if they are define with the constexpr keywork.
   
+  To construct constant expression data values from user-defined types, constructors can also be declared with **constexpr**. A constexpr constructor's function body can contain only declarations and null statements, and cannot declare variables, or define types, as with constexpr function. There must exist argument values such that, after argument substitution, it initialize the class's members with constant expressions. The destructor for such types must be trival.
   
+  The copy constructor for a type with any constexpr constructors should usually **also be defined as a constexpr constructor**, to allow objects of the type to be returned by value from a constexpr function. Any member functon of a class, such as copy constructors, operator overload, etc, can be declared as constexpr, so long as they meet the requirements for constexpr functions. **This allows the compiler to copy objects at the compile time, perform operations on them, etc**.
+  
+  **If a constexpr function or constructors is called with arguments which aren't constant expressions, the call behaves as if the function were not constexpr**, and the resulting value is not a const expression. Likewise, if the expression in the return statement of a constexpr function does not evaluate to a constant expression for a given invocation, the result is not a contant expression
   
   
   
