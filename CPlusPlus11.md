@@ -63,17 +63,31 @@
   
   **If a constexpr function or constructors is called with arguments which aren't constant expressions, the call behaves as if the function were not constexpr**, and the resulting value is not a const expression. Likewise, if the expression in the return statement of a constexpr function does not evaluate to a constant expression for a given invocation, the result is not a contant expression
   
+#### Modification of the definition of plain old data  
+  If someone were to create a C++03 POD type and add a non-vitual member function, this type would **no longer be a POD type**, could not be statically initialized, and would be incompatible with C despite no change to memory layout.
   
+  C++11 relaxed several of the POD tules, by dividing the POD concept into two separate concepts: **trivial** and **standard-layout**.
   
+  A type that **trival** can be **statically initialized**. Is also means that it is valid to copy data via **memcpy**, rather than having to use a copy constructor. Ths life time of a trivial type **begins when it storage is defined**, not when a constructor completes.
   
+  A **trivial class or struct** is defined as one that:
+  * Has a trivial default constructor. This may use the default constructor syntax (SomeConstructor() = default)
+  * Has trivial copy and move constructor, which may use the default syntax
+  * Has trivial copy and move assignment operators, which may use the default syntax
+  * Has a trivial destructor, which **must not be virtual**
   
+  Constructors are trivial only if there are no virtual member functions of the class and no virtual base class. Copy/move operations also require all non-static data members to be trivial.
   
+  A type that is **standard-layout** means that **it orders and packs its members in a way that is compatible with C**. A class or struct is standard-layout, by definition, provided:
+  * It has no virtual functions
+  * It has no virtual base classes
+  * All its non-static data members have the same access control (public, protected, private)
+  * All its non-static data members, including any its base classes, are in the same one class in the hierarchy
+  * The above rules also apply to all the base classes and to all non-static data members in the class hierarchy
+  * It has no base classes of the same type as the first defined non-static data member
   
+  **A class/struct/union is considered POD if it is trivial, standard-layout, and all of its non-static data members and base classes are PODs**.
   
-  
-  
-  
-
 ### Core language build-time performance enhancements
 ### Core language usability enhancements
 ### Core language functionality improvements
