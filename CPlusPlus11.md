@@ -246,8 +246,60 @@
   This form of for, called the "range-based for", will iterate over each element in the list. It will work for **C-style arrays, initializer list, any type that has begin() and end() functions defined for it that return iterators**.
   
 #### Lambda functions and expressions  
+  C++11 provides the ability to create anonymous functions, called **lambda functions**:
+  ```c++
+  [](int x, int y) -> int {return x + y;}
+  ```
+  The return type (-> int) can be omitted as long as all return expression return the same type.
   
+  **A lambda can optionally be a closure**.
   
+#### Alternative function syntax
+  For example, in C++03, this is disallowed:
+  ```c++
+  template <class Lhs, class Rhs>
+  Ret adding_func(const Lhs &lhs, const Rhs &rhs)
+  {
+      return lhs + rhs;
+  }
+  ```
+  
+  The type Ret is whatever the addition of types Lhs and Rhs will produce. Even with the aforementioned C++11 functionality of decltype, this is not possible:
+  ```c++
+  template <class Rhs, class Lhs>
+  decltype(lhs+rhs) adding_func(const Lhs &lhs, const Rhd &rhs)
+  {
+      return lhs + rhs;
+  }
+  ```
+  
+  To workaround this, C++11 introduced a new function declaration syntax, with a **trailing-return-type**:
+  ```c++
+  template <class Rhs, class Lhs>
+  auto adding_func(const Lhs &lhs, const Rhs &rhs) -> decltype(lhs+rhs)
+  {
+      return lhs + rhs;
+  }
+  ```
+  
+  This syntax can be used for moew mundane function declarations and definitions:
+  ```c++
+  struct SomeStruct
+  {
+      auto func_name(int x, int y) -> int
+  };
+  
+  auto SomeStruct::func_name(int x, int y) -> int
+  {
+      return x + y;
+  }
+  ```
+  
+  **Use of the keyword "auto" in this case is only part of the syntax and does not perform automatic type definition**.
+  
+#### Object construction improvement
+
+
 
 ### Core language functionality improvements
 
