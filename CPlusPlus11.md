@@ -148,6 +148,105 @@
   ```
 
 #### Uniform initializaion
+  C++11 provides a syntax that allows for fully uniform type initialization that work on any object.
+  ```c++
+  struct BasicStruct
+  {
+      int x;
+      double y;
+  };
+  
+  struct AltStruct
+  {
+      AltStruct(int x, double y):x_(x), y_(y){}
+      
+      private:
+          int x_;
+          double y_;
+  };
+  
+  BasicStruct var1{5, 3.2};
+  AltStruct var2{2, 4.3};
+  ```
+  
+  **Implicit type conversion will be used where needed.**
+  ```c++
+  struct IDString
+  {
+      std::string name;
+      int identifire;
+  };
+  
+  IDString get_string()
+  {
+      return {"foo", 42};
+  }
+  ```
+  
+  Uniform initialization does not replace constructor syntax, which is still needed at times. If a class has an initializer list constructor, then **it takes priority over other forms of construction**, provided that the initializer list conforms to the sequence constructor's type.
+  
+#### Type inference  
+  In C++03 and C, to use a variable, its type must be specified explicitly. However, with the advent of template types and template metaprogramming techniques, the type of something, particular the **well-defined return value of a function**, may not be easily expressed. Thus, strong intermediates in variables is difficult, possibly needing knowledge of the internal of a given metaprogramming library.
+  
+  C++11 allows this to be mitigate in two ways:
+  * the definition of a variable with an explicit initialization can use the **auto** keyword, this creates a variable of the specific type of the initializer(The type is easily determined procedurally by the compiler as part of its semantics analysis duties, but is not easy for the user to determine upon inspection):
+  ```c++
+  auto some_strange_callable_type = std::bind(&some_function, _2, _1, some_object);
+  auto other_variable = 5;
+  ```    
+  * the keyword **decltype** can be used to determine the type of expression at compile-time(This is more useful in conjunction with **auto**, since the type of auto variable is known only to the compiler. decltype can be also very useful of expressions in code that makes heavy use of operator overloading and specialized types):
+  ```c++
+  int some_int;
+  decltype(some_int) other_integer_variable = 5;
+  ```
+  
+  auto is also useful for reducing the verbosity of the code:
+  ```c++
+  for (std::vector<int>::const_iterator itr = myvec.begin(); itr != myvec.end(); ++itr)
+  
+  for (auto itr = myvec.begin(); itr != myvec.end(); ++itr)
+  
+  for (auto &x: myvec)
+  ```
+  
+  The difference grows as the programmer begins to nest container, though in such cases **typedef** are good way to decrease the amount of code. The type denoted by decltype can be different from the type deduced by auto:
+  ```c++
+  #include <vector>
+  
+  int main
+  {
+      const std::vector<int> v(1);
+      auto a = v[0];
+      decltype(v[0]) b = 1;                // b has type const int&
+      
+      auto c = 0;
+      auto d = c;
+      decltype(c) e;
+      decltype((c)) f = c;                 // f has type int&
+      decltype(0) = g;
+  
+      return 0;
+  }
+  ```
+  
+#### Range-based for loop  
+  C++11 extends the syntax of the for statement to allow for easy iteration over **a range of elements**:
+  ```c++
+  int my_array[5] = {1, 2, 3, 4, 5};
+  
+  for (int &x: my_array){
+      x *= 2;
+  }
+  
+  for (auto &x: my_array){
+      x *= 2;
+  }
+  ```
+  
+  This form of for, called the "range-based for", will iterate over each element in the list. It will work for **C-style arrays, initializer list, any type that has begin() and end() functions defined for it that return iterators**.
+  
+#### Lambda functions and expressions  
+  
   
 
 ### Core language functionality improvements
