@@ -626,6 +626,111 @@
  
  
 ### Core language functionality improvements
+  These features allow the language to do things that were formerly impossible, exceedingly verbose, or needed non-portable libraries.
+
+#### Variadic template
+  In C++11, templates can take variable numbers of template parameters. This also allows the definition of type-safe variadic functions.
+  
+---
+
+#### New string literals
+  **_C++03 offers two kinds of string literals (const char: ""; const w_char: L"")_**. Neither literal type offers support for string literals with UTF-8, UTF-16, or any other kind of Unicode encodings.
+  
+  The definition of the type char has been **_modified to explicitly express that it's at least the size needed to store an eight-bit coding of UTF-8_**, and large enough to contain any member of the compiler's basic execution character set. It was formerly defined as only the latter in the C++ standard itself, then relying on the C standard yo guarantee at least 8 bits.
+  
+  C++11 supports 3 Unicode encodings: UTF-8(char), UTF16(char16_t), UTF-32(char32_t):
+  ```c++
+  u8"I'm a UTF-8 string"    // const char[]
+  u"This is a UTF-16 string"    // const char16_t[]
+  U"This is a UTF-32 string"    // const char32_t[]  
+  ```
+  
+  When building Unicode string literals, it is often useful to insert **_Unicode codepoints directly into the string_**. To do this, C++11 allows this syntax:
+  ```c++
+  u8"This is a Unicode Character: \u2018"
+  u"This is a bigger Unicode Character: \u2018"
+  U"This is a Unicode Character: \U00002018"
+  ```
+  Only valid Unicode codepoints can be entered. For example, codepoints on the range U+D800--U+DFFF are forbidden, as they are reserved for surrogate pairs in UTF-16 encodings.
+  
+  It is also sometimes useful to avoid escaping strings manually, C++ provides a raw string literal:
+  ```c++
+  R"(The String Data \ Stuff " )"
+  R"delimiter(The String Data \ Stuff " )delimiter"
+  ```
+  In second case, the "delimiter(" starts the string, and it ends only when ")delimiter" is reached. The string **_delimiter_** can be any string up to 16 characters in length, including the empty string. This string cannot contain spaces, control characters, (, ), ot the \\ character. **_Using this delimiter string allows the user to have ) characters within raw string literals_**.
+  ```c++
+  R"delimiter((a-z))delimiter"    // (a-z)
+  ```
+  
+  Raw string literals can be combined with the wide literal or any of the Unicode literal prefixes:
+  ```c++
+  u8R"XXX(I'm a "raw UTF-8" string.)XXX"
+  uR"*(This is a "raw UTF-16" string.)*"
+  UR"(this is a "raw UTF-32" string.)"
+  ```
+  
+---
+
+#### User-defined literals
+  C++03 provides a number of literals. "12.5 -> double, 12.5 -> float", the suffix modifiers for literals are fixed by the C++ specification, and C++03 code cannot create new literal modifiers.
+
+  **_By contrast, C++11 enables the user to define new kinds of literal modifiers that will construct objects based on the string of characters that the literal modifier_**.
+
+  Transformation of literals is redefined into two distinct phases:raw and cooked.
+  
+  raw literal|cooked literal
+  -----------|--------------
+  "1234"|1234
+  "0xA"|10
+  
+  literals can be extended in both raw and cooked forms, **_with the exception of string literals, which can be processed only in cooked form_**. This exception is due to the fact that strings have prefixs that affect the specific meaning and type of the characters in question.
+  
+  All user-defined literals are suffixes; defining prefix literal is not possible. All suffixes starting with any character except underscore (\_) are reserved by the standard. Thus, all user-defined literals must have suffixes starting with an underscore (\_).
+  
+  User-defined literals processing the raw from of the literal are defined via a literal operator, which is written as **_operator ""_**:
+  ```c++
+  OutputType operator "" _mysuffix(const char *literal_string)
+  {
+      // assumes that OutputType has a constructor that takes a const char *
+      OutputType ret(literal_string);
+      return ret;
+  }
+  
+  // This function is passed "1234" as a C-style string, so it has a null terminator
+  OutputType some_variable = 1234_musuffix;
+  // assumes that OutputType has a get_value() method that returns a double
+  assert(some_variable.get_value() == 1234.0)
+  ```
+
+  An alternative mechanism for processing integer and floating point raw literals is via a variadic templte:
+  ```c++
+  template <char...>
+  OutputType operator "" _tuffix();
+  
+  OutputType some_variable = 1234_tuffix;
+  OutputType another_variable = 2.17_tuffix;
+  ```
+  
+  This instantiate the literal processing function as **_operator "" \_tuffix<'', '', '', ''>_**
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
 
 ## C++ standard library changes
 ### Updates to standard library components
