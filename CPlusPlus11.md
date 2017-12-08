@@ -554,7 +554,7 @@
   
 ---  
   
-#### Template aliass  
+#### Template aliases  
   ```c++
   template <typename First, typename Second, int third>
   class SomeType;
@@ -582,11 +582,49 @@
 ---  
 
 #### Unrestricted unions
-
-
+  In C++03, **_there are restrictions on what types of objects can be members of a union_**. For example, unions cannot contain any objects that define a non-trivial constructor or destructor. C++11 lifts some of these restrictions.
   
-
-
+  If a union member has a non-trivial special member function, the compiler will not generate the equivalent member function for the union and it must be manually defined:
+  ```c++
+  #include <new>    // Needed for placement 'new'
+  
+  struct Point
+  {
+      Point()
+      {
+      }
+      
+      Point(int x, int y):x_(x), y_(y)
+      {
+      }
+      
+      int x_;
+      int y_;
+  };
+  
+  union U
+  {
+      int z;
+      double w;
+      Point p;    // Invalid in C++03, valid in C++11
+      
+      U()
+      {
+      }
+      
+      U(const Point &pt):p(pt)
+      {
+      }
+      
+      U &operator=(const Point &pt)
+      {
+          new(&p) Point(pt);
+          return *this;
+      }
+  };
+  ```
+ 
+ 
 ### Core language functionality improvements
 
 ## C++ standard library changes
