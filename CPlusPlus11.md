@@ -712,7 +712,31 @@
   OutputType another_variable = 2.17_tuffix;
   ```
   
-  This instantiate the literal processing function as **_operator "" \_tuffix<'', '', '', ''>_**
+  This instantiate the literal processing function as **_operator "" \_tuffix<'1', '2', '3', '4'>_**. In thsi form, there is no null character terminating the string. The main purpose for doing this is to use C++11's constexpr keyword to ensure that the compiler will transform the literal entirely at compile time, assuming OutputType is a constexpr-constructible and copyable type, and the literal processing function is a constexpr function.
+  
+  For numeric literals, the type of the cooked literal is either **_unsigned long long_** for integral literals or **_long double_** for floating point literals. (Note: There is no need for signed integral types because a sign-prefixed literal is parsed as an expression containning the sign as a unary prefix operator and the unsigned number.) There is no alternative template form:
+  ```c++
+  OutputType operator "" _suffix(unsigned long long);
+  OutputType operator "" _suffix(long double);
+  
+  OutputType some_variable = 1234_suffix;    // Uses the "unsigned long long" overload
+  OutputType another_variable = 3.1416_suffix;    // Uses the "long double" pverload
+  ```
+  
+  In accord with the formerly mentioned new string prefix, for string literals, these are used:
+  ```c++
+  OutputType operator "" _ssuffix(const char *string_values, size_t num_chars);
+  OutputType operator "" _ssuffix(const wchar_t *string_values, size_t num_chars);
+  OutputType operator "" _ssuffix(const char16_t *string_values, size_t num_chars);
+  OutputType operator "" _ssuffix(const char32_t *string_values, size_t num_chars);
+  
+  OutputType some_variable = "1234"_ssuffix;    // Uses the "const char *" overload
+  OutputType some_variable = u8"1234"_ssuffix;    // Uses the "const char *" overload
+  OutputType some_variable = L"1234"_ssuffix;    // Uses the "const wchar_t *" overload
+  OutputType some_variable = u"1234"_ssuffix;    // Uses the "const char16_t *" overload
+  OutputType some_variable = U"1234"_ssuffix;    // Uses the "const char32_t *" overload
+  ```
+  
   
   
   
