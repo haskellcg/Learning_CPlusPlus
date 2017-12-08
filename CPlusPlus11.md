@@ -2,7 +2,7 @@
   Is was approved by IOS on 12 August 2011, replacing **_C++03_**, superseded by **_C++14_** on 18 August 2014 and later, by **_C++17_**. It was formerly named **_C++0x_** because it was expected to be published before 2010.
   
   Areas of the core language that were significantly improved include **_multithread support, generic programming support, uniform initialization, and performance_**.
-  
+    
 ## Design goals 
   * Maintain stability and compatibility with **_C++98_** and possible with **_C_**
   * Prefer introducing new features via the standard library, rather than extending the core language
@@ -13,7 +13,7 @@
   * Provide proper solutions for real-world problems
   * Implement zero-overhead principle (further support needed by some utilities must be used only if the utility is used)
   * Make C++ easy to teach and to learn without removing any utility needed by expert programmers
-  
+
 ## Extensions to the C++ core language  
 ### Core language runtime performance enhancements
 #### Rvalue references and move constructors
@@ -26,7 +26,9 @@
   For safety reasons, some restrictions are imposed. A named variable will **_never be considered to be an rvalue even if it is declared as such_**. To get an rvalue, the **_function template std::move()_** should be used.
   
   Due to the nature of the wording of rvalue reference, and to some modification to the wording for lvalue reference, rvalue references allow **_developers to provide perfect function forwarding_**. When combine with variadic templates, this ability allows for function templates that can perfectly forward arguments to another function that takes those particular arguments. **_This is useful for forwarding constructor parameters, to create factory functions that will automatically call the correct constructor for those particular arguments_**.
-  
+
+---
+
 #### constexpr - Generalized constant expressions
   Constant expressions are optimization oppotunities for compilers, and compilers frequently execute them at **_compile time_**, and hardcode the results in the program.
   
@@ -62,6 +64,8 @@
   The copy constructor for a type with any constexpr constructors should usually **_also be defined as a constexpr constructor_**, to allow objects of the type to be returned by value from a constexpr function. Any member functon of a class, such as copy constructors, operator overload, etc, can be declared as constexpr, so long as they meet the requirements for constexpr functions. **_This allows the compiler to copy objects at the compile time, perform operations on them, etc_**.
   
   **_If a constexpr function or constructors is called with arguments which aren't constant expressions, the call behaves as if the function were not constexpr_**, and the resulting value is not a const expression. Likewise, if the expression in the return statement of a constexpr function does not evaluate to a constant expression for a given invocation, the result is not a contant expression
+  
+---  
   
 #### Modification of the definition of plain old data  
   If someone were to create a C++03 POD type and add a non-vitual member function, this type would **_no longer be a POD type_**, could not be statically initialized, and would be incompatible with C despite no change to memory layout.
@@ -146,6 +150,8 @@
   std::vector<std::string> v({"x", "y", "z"});
   std::vector<std::string> v{"x", "y", "z"};
   ```
+  
+---  
 
 #### Uniform initializaion
   C++11 provides a syntax that allows for fully uniform type initialization that work on any object.
@@ -184,6 +190,8 @@
   ```
   
   Uniform initialization does not replace constructor syntax, which is still needed at times. If a class has an initializer list constructor, then **_it takes priority over other forms of construction_**, provided that the initializer list conforms to the sequence constructor's type.
+  
+---  
   
 #### Type inference  
   In C++03 and C, to use a variable, its type must be specified explicitly. However, with the advent of template types and template metaprogramming techniques, the type of something, particular the **_well-defined return value of a function_**, may not be easily expressed. Thus, strong intermediates in variables is difficult, possibly needing knowledge of the internal of a given metaprogramming library.
@@ -229,6 +237,8 @@
   }
   ```
   
+---  
+  
 #### Range-based for loop  
   C++11 extends the syntax of the for statement to allow for easy iteration over **_a range of elements_**:
   ```c++
@@ -245,6 +255,8 @@
   
   This form of for, called the "range-based for", will iterate over each element in the list. It will work for **_C-style arrays, initializer list, any type that has begin() and end() functions defined for it that return iterators_**.
   
+---  
+  
 #### Lambda functions and expressions  
   C++11 provides the ability to create anonymous functions, called **_lambda functions_**:
   ```c++
@@ -253,6 +265,8 @@
   The return type (-> int) can be omitted as long as all return expression return the same type.
   
   **_A lambda can optionally be a closure_**.
+  
+---  
   
 #### Alternative function syntax
   For example, in C++03, this is disallowed:
@@ -295,7 +309,9 @@
   }
   ```
   
-  **)Use of the keyword "auto" in this case is only part of the syntax and does not perform automatic type definition_**.
+  **_Use of the keyword "auto" in this case is only part of the syntax and does not perform automatic type definition_**.
+  
+---  
   
 #### Object construction improvement
   **_In C++03, constructors of a class not allowed to call other constructors in an initializer list of that class._** Each constructor must construct all of its class member itself or call a common member function:
@@ -378,6 +394,8 @@
 
   **_Any constructor of the class will initialize value with 5, if the constructor does not override the initialization with its own_**.
   
+---  
+  
 #### Explicit override and final
   ```c++
   struct Base
@@ -432,6 +450,8 @@
   * They do not **_alter the declared type signature and do not declare or override any new identifier in any scope_**
   * The recognized and accepted declarator attribute may be extended in future versions of C++
   * In any other location, they can be valid identifier for new declarations (and later use if they are accessible)
+  
+---  
 
 #### Null pointer constant
    Since the dawn of C in 1972, the constant 0 has had the double role of constant integer and null pointer constant. The ambiguity inherent in the double meaning of 0 was dealt with in C by using the preprocessor macro NULL, which commonly expands to either **_((void \*)0) or 0_**. C++ forbids implicit conversion conversion from void \* to other pointer types, thus removing the benefit of casting 0 to void \*. As a consequence, only **_0 is allowed as a null pointer constant_**. This interacts poorly with function overloading:
@@ -462,6 +482,8 @@
         typedef void * nullptr;
   */
   ```
+  
+---
   
 #### Strongly typed enumerations  
   In C++03, enumerations are not type-safe. The only safety that C++03 provides is that an integer or a value of one enum type does not convert implicitlt to another enum type. Further, the underlying intergal type is implementation defined; code that depends on the size of the enumeration is thus non-portable. Lastly, enumeration values are scoped to the enclosing scope. Thus it is not possible for two separate enumeration in the same scope to have maching member names.
@@ -507,6 +529,8 @@
    enum Enum2: unsigned short;    //Invalid in C++11, because Enum2 was formerly declard with a different underlying type
    ```
    
+---   
+   
 #### Right angle bracket
   C++03's parser defines ">>" as right shift operator or stream extraction operator in all cases. However, with nested template declarations, there is tendency for the programmer to neglect to place a space between the two right angle brackets, thus causing a compiler syntax error.
   
@@ -521,10 +545,14 @@
       // Interpreted as a std::vector of SomeType<false>, followed by the declarator "x2", which is valid C++11 syntax
   ```
   
+---  
+  
 #### Explicit conversion operators  
   C++98 added the **_explicit keyword as modifier on constructors ro prevent single-argument constructor from being used as implicit type conversion operators_**. However, this does nothing for actual conversion operators. For example, a smart pointer class may have an **_operator bool()_** to allow it to act more like primitive pointer: if it include this conversion, it can be tested with **_if (smart_ptr_variable)_** . However, this allows other, unintended conversions as well. Because C++ bool is defined as an arithmetic type, it can implicitly converted to integral ot even floating-point types, which allows for mathematical operations that not intended by the user.
   
   In C++11, the **_explicit keyword can now be applied to conversion operators_**. As with constrcutor, it prevents using those conversion functions in implicit conversion. however, language contexts that specifically need a boolean value count as explicit conversions and can thus use a bool conversion operator.
+  
+---  
   
 #### Template aliass  
   ```c++
@@ -550,6 +578,10 @@
   
   using FunctionType = void (*) (double);    // New introduced syntax
   ```
+  
+---  
+
+#### Unrestricted unions
 
 
   
