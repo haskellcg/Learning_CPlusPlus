@@ -434,8 +434,49 @@
   * In any other location, they can be valid identifier for new declarations (and later use if they are accessible)
 
 #### Null pointer constant
-
-
+   Since the dawn of C in 1972, the constant 0 has had the double role of constant integer and null pointer constant. The ambiguity inherent in the double meaning of 0 was dealt with in C by using the preprocessor macro NULL, which commonly expands to either **_((void \*)0) or 0_**. C++ forbids implicit conversion conversion from void \* to other pointer types, thus removing the benefit of casting 0 to void \*. As a consequence, only **_0 is allowed as a null pointer constant_**. This interacts poorly with function overloading:
+   ```c++
+   void foo(char *);
+   void foo(int);
+   ```
+  If NULL is defined as 0 (which is usually the case in C++), the statement **_foo(NULL)_** will call foo(int), which is almost centainly not what the programmer intended, and not what a superficial reading of the code suggests.
+  
+  C++11 corrects this by introducing a new **_keyword_** to serve as a distinguished null pointer constant: **_nullptr_**. It is of type **_nullptr\_t_**, which is implicitly convertible and comparable to any pointer type or pointer-to-member type. It is not implicitly convertible or comparable to integral types, **_except for bool_**. **_0 remains a valid null pointer contant_**.
+  ```c++
+  char *pc = nullptr;  // OK
+  int *pi = nullptr;   // OK
+  bool b = nullptr;    // OK, b is false
+  int i = nullptr;     // error
+  
+  foo(nullptr);        // calls foo(nullptr_t), not foo(int)
+  /*
+    Note that foo(nullptr_t) will actually call the foo(char *) in the above example.
+    Only if no other functions are overloading with compatible pointer types in scope.
+    If multiple overloading exist, the resolution will fail as it is ambiguous, unless
+  there is an explicit declaration of foo(nullptr_t)
+  
+    In standard types headres for C++11, the nullptr_t type should be declared as:
+        typedef decltype(nullptr) nullptr_t;
+    but not as:
+        typedef int nullptr;
+        typedef void * nullptr;
+  */
+  ```
+  
+#### Strongly typed enumerations  
+  In C++03, enumerations are not type-safe. The only safety that C++03 provides is that an integer or a value of one enum type does not convert implicitlt to another enum type. Further, the underlying intergal type is implementation defined; code that depends on the size of the enumeration is thus non-portable. Lastly, enumeration values are scoped to the enclosing scope. Thus it is not possible for two separate enumeration in the same scope to have maching member names.
+  
+  C++11 allows a special classification of enumeration that has none of these issues. This is expressed using the **_enum class_** (enum struct is also accepted as a synonym) declaration:
+  ```c++
+  enum class Enumeration
+  {
+      Val1,
+      Val2,
+      Val3 = 100,
+      Val4
+  };
+  ```
+  
 
 
 ### Core language functionality improvements
