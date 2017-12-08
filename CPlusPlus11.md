@@ -522,8 +522,34 @@
   ```
   
 #### Explicit conversion operators  
-
-
+  C++98 added the **_explicit keyword as modifier on constructors ro prevent single-argument constructor from being used as implicit type conversion operators_**. However, this does nothing for actual conversion operators. For example, a smart pointer class may have an **_operator bool()_** to allow it to act more like primitive pointer: if it include this conversion, it can be tested with **_if (smart_ptr_variable)_** . However, this allows other, unintended conversions as well. Because C++ bool is defined as an arithmetic type, it can implicitly converted to integral ot even floating-point types, which allows for mathematical operations that not intended by the user.
+  
+  In C++11, the **_explicit keyword can now be applied to conversion operators_**. As with constrcutor, it prevents using those conversion functions in implicit conversion. however, language contexts that specifically need a boolean value count as explicit conversions and can thus use a bool conversion operator.
+  
+#### Template aliass  
+  ```c++
+  template <typename First, typename Second, int third>
+  class SomeType;
+  
+  template <typename Second>
+  typedef SomeType<OtherType, Second, 5> TypedefName;    //Invalid in C++03
+  ```
+  
+  C++11 adds this ability with this syntax:
+  ```c++
+  template <typename First, typename Second, int Third>
+  class SomeType;
+  
+  template <typename Second>
+  using TypedefName = SomeType<OtherType, Second, 5>
+  ```
+  
+  The **_using_** syntax can be also used as type alias in C++11:
+  ```c++
+  typedef void (*FunctionType)(double);    //old style
+  
+  using FunctionType = void (*) (double);    // New introduced syntax
+  ```
 
 
   
