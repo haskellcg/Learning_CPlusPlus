@@ -477,6 +477,56 @@
   };
   ```
   
+  This enumeraton is type-safe. Enum class values are not implicitly converted to integer. Thus, they cannot be compare to integers either (**_the expression Enumeration::Val4 == 101 gives a compile error_**).
+  
+  The underlying type of enum classes is always known. The deafult is **_int_**, this can be overridden to a different integal type as can be seen in this example:
+  ```c++
+  enum class Enum2: unsigned int 
+  {
+      Val1, 
+      Val2
+  };   
+  ```
+   **_With old-style enumeration the values are placed in the outer scope. With new-style enumerations they are placed within the scope of the enum class name. So in the above example, Val1 is undefined, but Enum2::Val1 is defined._**
+   
+   There is also a transitional syntax to allow old-style enumerations to provide explicit scoping, and the definition of the underlying type:
+   ```c++
+   enum Enum2: unsigned long
+   {
+       Val1 = 1,
+       Val2
+   };
+   ```
+   
+   Forward-declaring enums are also possible in C++11. **_Formly, enum types could not be forward-declared because the size of the enumeration depends on the definition of its members. As long as the size of the enumeration is specified either implicitly or explicitly, it can be forward-declared_**:
+   ```c++
+   enum Enum1;    // Invalid in C++03 and C++11; the underlying type cannot be determined
+   enum Enum2: unsigned int;    // Valid in C++11, the underlying type is specified explicitly
+   enum class Enum3;    //Valid in C++11, the underlying type is int
+   enum class Enum4: unsigned int;    // Valid in C++11
+   enum Enum2: unsigned short;    //Invalid in C++11, because Enum2 was formerly declard with a different underlying type
+   ```
+   
+#### Right angle bracket
+  C++03's parser defines ">>" as right shift operator or stream extraction operator in all cases. However, with nested template declarations, there is tendency for the programmer to neglect to place a space between the two right angle brackets, thus causing a compiler syntax error.
+  
+  C++11 improves the specification of the parser so that multiple right angle brackets will be interpreted as closing the template argument list where it is reasonable.
+  ```c++
+  template <bool Test> class SomeType;
+  
+  std::vector<SomeType<1>2>> x1;    
+      // Interpreted as a std::vector of SomeType<true>, followed by "2 >> x1", which is not valid syntax for declaration
+  
+  std::vector<SomeType<(1>2)>> x2;
+      // Interpreted as a std::vector of SomeType<false>, followed by the declarator "x2", which is valid C++11 syntax
+  ```
+  
+#### Explicit conversion operators  
+
+
+
+
+  
 
 
 ### Core language functionality improvements
