@@ -737,7 +737,32 @@
   OutputType some_variable = U"1234"_ssuffix;    // Uses the "const char32_t *" overload
   ```
   
+---
+
+#### Multithreading memory model
+  C++11 standardlizes support for multithreaded programming.
   
+  There are two parts involved:
+  * A memory model which allows multiple threads to co-exist in a program
+  * Library support for interaction between threads
+  
+  The memory model defines when multiple threads may access the same memory localtion, and specifies when updates by one thread become visible to other threads.
+  
+---
+
+#### Thread-local storage
+  In a multi-threaded environment, it is common for every thread to have some unique variables. This already happends for **_the local variables of a function, but it does not happen for global and static variables_**.
+  
+  A new thread-local storage duration (in addition to the existing static, dynamic, automatic) is indicated by the storage specifier **_thread\_local_**.
+  
+  Any object which could have static storage duration (i.e., lifetime spanning the entire execution of the program) may be given thread-local duration instead. The intend is that like any other static-duration variable, **_a thread-local object can be initialized using a constructor and destroyed using a destructor_**.
+  
+---
+
+#### Explicitly defaulted and deleted special member functions
+  
+
+
   
   
   
