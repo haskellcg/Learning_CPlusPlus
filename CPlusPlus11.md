@@ -842,7 +842,25 @@
 ---
 
 #### Allow sizeof to work on members of classes without an explicit object
+  In C++03, the sizeof operator can be used on types and pbjects. But it cannot be used to do this:
+  ```c++
+  struct SomeType
+  {
+      OtherType member;
+  };
   
+  sizeof(SomeType::member);    // Does not work on C++03. Okay with C++11
+  ```
+  
+  This should return size of OtherType.
+  
+  **_C++03 disallow this, so it is a compiler error. C++11 allow it_**.
+  
+  It is also allowed for the **_alignof_** operator introduced in C++11.
+  
+---
+
+#### Control and query object alignment
   
   
   
