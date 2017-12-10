@@ -760,12 +760,88 @@
 ---
 
 #### Explicitly defaulted and deleted special member functions
+  In C++03, making a class inheritedly non-copyable, for example, requires declaring a private copy constructor and copy assignment operator and not defining them. Attempting to use these functions is **_a violation of the One Definition Rule (ODR)_**. While a disgnostic message is not required, violations may result in a linker error.
   
+  C++11 allows the explicit defaulting and deleting of these special member functions:
+  ```c++
+  struct SomeType
+  {
+      SomeType() = default;    // The default constructor is explicitly stated
+      SomeType(OtherType value);
+  };
+  
+  struct NonCopyable
+  {
+      NonCopyable() = default;
+      NonCopyable(const NonCopyable &) = delete;
+      NonCopyable &operator=(const NonCopyable &) = delete;
+  };
+  ```
 
+  The **_= delete_** specifier can be used to prohibit calling any function, which can be used to disallow calling a member function with particular parameters:
+  ```c++
+  struct NoInt
+  {
+      void f(double);
+      void f(int) = delete;
+  };
+  
+  // To disallow calling the function with any type other than double
+  struct OnlyDouble
+  {
+      void f(double d);
+      
+      template <class T>
+      void f(T) = delete;
+  };
+  ```
+  
+---  
 
+#### Type long long int
+  In C++03, ther largest integer type is **_long int_**. It is guaranteed to have at least as many useable bits as int. **_This resulted in long int having size of 64 bits on some popular implementations and 32 bits on others_**.
+
+  C++11 adds a new integer type **_long long int_** to address this issue. It is guaranteed to be at least as large as a **_long int_**, and have no fewer than 64 bits. The type was originally introduced by C99 to standard C, and most C++ compilers supported it as an extension already.
+  
+---
+
+#### Static assertions
+  **_C++03 provides two methods to test assertions_**:
+  * the macro assert
+  * the preprocessor directive #error
+  
+  However, neither is appropriate for use in template: **_the macro tests the assertion at execution-time, while the preprocessor directive tests the assertion during preprocessor, which happens before instantiation of templates_**.
   
   
+  The new utility introduces a new way to test assertions at compile-time, using keyword **_static_assert_**. The declaration assumes this form:
+  ```c++
+  static_assert(constant-expression, error-message)
+  ```
   
+  Example:
+  ```c++
+  static_assert((GREEKPI > 3.14) && (GREEKPI < 3.15), "GREEKPI is inaccurate");    
+  ```
+  ```c++
+  template <class T>
+  struct Check
+  {
+      static_assert(sizeof(int) <= sizeof(T), "T is not big enough");
+  };
+  ```
+  ```c++
+  template <class Integral>
+  Integral foo(Integral x, Integral y)
+  {
+      static_assert(std::is_integral<Integral>::value, "foo() parameter must be an integral type");
+  }
+  ```
+  
+  Static assertions are useful outside of templates also. For instance, a given implementation of an algorithm might depend on the size of a long long being larger than an int, something the stanard does not guarantee. Such an assumption is valid on most systems and compilers, but not all.
+  
+---
+
+#### Allow sizeof to work on members of classes without an explicit object
   
   
   
