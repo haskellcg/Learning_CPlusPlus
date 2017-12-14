@@ -984,11 +984,86 @@
 
 
 ### Extension random number facility
-
-
+  The C standard library provides the ability to generate pseudorandom number via the function **_rand_**. However, the algorithm is delegated entirely to the library vendor. **_C++ inherited this functionality with no changes, but C++11 provides a new method for generating pseudorandom numbers_**.
+  
+  C++11's random number functionality is split into 2 parts:
+  * A generator engine that contains the random number generator's state and produces the pseudorandom numbers
+  * A distribution, which determines the range and mathematical distribution of the outcome
+  
+  C++11 mechanism will come with 3 base generator engine algorithms:
+  * linear_congruential_engine
+  * subtract_with_carry_engine
+  * mersenne_twister_engine
+  
+  C++11 also provides a number of standard distributions:
+  * uniform_int_distribution
+  * uniform_real_distribution
+  * bernoulli_distribution
+  * binomial_distribution
+  * geometric_distribution
+  * negative_binomial_distribution
+  * poisson_distribution
+  * exponential_distribution
+  * gamma_distribution
+  * weibull_distribution
+  * extreme_value_distribution
+  * normal_distribution
+  * lognormal_distribution
+  * chi_squared_distribution
+  * cauchy_distribution
+  * fisher_f_distribution
+  * student_t_distribution
+  * discrete_distribution
+  * piecewise_contant_distribution
+  * piecewise_linear_distribution
+    
+  The generator and distributions are combined as in this example:
+  ```c++
+  #include <random>
+  #include <functional>
+  
+  std::uniform_int_distribution<int> distribution(0, 99);
+  std::mt19937 engine;
+  auto generator = std::bind(distribution, engine);
+  
+  //1
+  int random = generator();
+  
+  //2
+  int random2 = distribution(engine);
+  ```
+    
 ### Wrapper reference
-
-
+  A wrapper reference is obtained form an interface of the template class **_reference_wrapper_**. Wrapper references are similar to normal reference ('&') of the C++ language. To obtain a wrapper reference from any object the function template **_ref_** is used (for a constant reference cref is used).
+  
+  Wrapper references are useful above all for function template, where references to parameters rather than copies are needed:
+  ```c++
+  void func(int &r)
+  {
+      r++;
+  }
+  
+  template<class F, class P>
+  void g(F f, P t)
+  {
+      f(t);
+  }
+  
+  int main()
+  {
+      int i = 0;
+      g(func, i);
+      std::cout << i << std::endl;
+      
+      g(func, std::ref(i));
+      std::cout << i << std::endl;
+  
+      return 0;
+  }
+  ```
+  
+  This new utility was added to existing <utility> header and didn't need further extension of the C++ language.
+  
 ### Polymorphic wrapper for function objects
   Polymorphic wrappers for function objects are similar to function pointers in semantics and syntax, but are less tightly bound and **_can indiscriminately refer to anything which can be called (function pointer, member function pointer, or functors) whose arguments are compatible with those of the wrapper_**:
   ```c++
