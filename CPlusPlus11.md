@@ -990,15 +990,144 @@
 
 
 ### Polymorphic wrapper for function objects
-
-
+  Polymorphic wrappers for function objects are similar to function pointers in semantics and syntax, but are less tightly bound and **_can indiscriminately refer to anything which can be called (function pointer, member function pointer, or functors) whose arguments are compatible with those of the wrapper_**:
+  ```c++
+  std::function<int (int, int)> func;
+  std::plus<int> add;
+  
+  func = add;
+  int a = func(1, 2);
+  
+  std::function<bool (short, short)> func2;
+  if (!func2){
+      bool adjacent(long x, long y);
+      func2 = &adjacent;
+      
+      struct Test
+      {
+          bool operator()(short x, short y);
+      }:
+      Test car;
+      func = std::ref(car);
+  }
+  
+  func = func2;
+  ```  
+  The template class function was defined inside the header <functional>, without needing any change to the C++ language.
+  
 ### Type traits for metaprogramming
-
-
+  Metaprogramming consists of creating a program that creates or modifies another program (or itself). This can happen during compilation or during executing. The C++ standard Committee has decided to introduce a library that allows metaprogramming during compiling via templates.
+  
+  Here is an example of a meta-program, using the C++03 standard: a recursion of template instances for calculating integer exponents:
+  ```c++
+  template<int B, int N>
+  struct Pow
+  {
+      enum
+      {
+          value = B * Pow<B, N-1>::Value;
+      };
+  };
+  
+  template<int B>
+  struct Pow<B, 0>
+  {
+      enum
+      {
+          value = 1;
+      };
+  };
+  
+  int quartic_of_three = Pow<3, 4>::value;
+  ```
+  
+  Many algorithms can operate on different types of data; C++'s templates support generic programming and make code more compact and useful. Nevertheless, **_it is common for algorithms to need information on data types being used_**. This information can be extracted during instantiation of a template class using type traits.
+  
+  Type traits can identify the category of an object and all the characteristics of a class (or of a struct). They are defined in the new header <type_traits>:
+  ```c++
+  template<bool B>
+  struct Algorithm
+  {
+      template<class T1, class T2>
+      static int do_it(T1 &, T2 &)
+      {
+      }
+  };
+  
+  template<>
+  struct Algorithm<true>
+  {
+      template<class T1, class T2>
+      static int do_it(T1, T2)
+      {
+      }
+  };
+  
+  template<class T1, class T2>
+  int elaborate(T1 A, T2 B)
+  {
+      return Algorithm<std::is_integral<T1>::value && std::is_floating_point<T2>::value>::do_it(A, B);
+  }
+  ```
+  
+  Via type traits, defined in header **_type_traits_**, it is also possible to create type transformation operations (static_cast and const_cast are insufficient inside a template).
+  
+  This type of programming produces elegant and concise code; however the weak point of these techniques is the debugging: uncomfortable during compilation and very difficult program execution.
+  
 ### Uniform method for computing the return type of function objects
-
-
-
+  Determining the return type of a template function object at compile-time is not intuitive, particularly if the return value depends on the parameters of the function. As an example:
+  ```c++
+  struct Clear
+  {
+      int operator()(int) const;
+      double operator()(double) const;
+  };
+  
+  template<class Obj>
+  class Calculus
+  {
+  public:
+      template<class Arg>
+      Arg operator()(Arg &a) const
+      {
+          return member(a);
+      }
+  
+  private:
+      Obj member;
+  };
+  ```
+  
+  Instantiating the class template **_Calculus<Clear>_**, the function object of calculus will have always the same return type as the function object of Clear, however, given class Confused below: 
+  
+  ```c++
+  struct Confused
+  {
+      double operator()(int) const;
+      int operator()(double) const;
+  };
+  ```
+  The compiler may generate warnings about the conversion from int to double and vice versa.
+  
+  TR1 introduces, and C++11 adopts, the template class **_std:result\_of_** that allows one to determine and use the return type of a function object for every declaration:
+  ```c++
+  template<class Obj>
+  class CalculusVer2
+  {
+  public:
+      template<class Arg>
+      typename std::result_of<Obj(Arg)>::type operator()(Arg &a) const
+      {
+          return member(a);
+      }
+  
+  private:
+      Obj member;  
+  };
+  ```
+  
+  The only change from the TR1 version of std::result_of is that the TR1 version allowed an implementation to fail to be able to determine the result type of a function call. **_Due to changes to C++11 for support decltype_**, the C++11 version of std::result_of no longer needs these special cases; implementation are required to compute a type in all cases.
+  
 ## Improved C compatibility
   For compatibility with C, from C99, these were added:
   * Preprocessor:
