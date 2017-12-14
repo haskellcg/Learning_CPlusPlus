@@ -904,10 +904,18 @@
   Most standard library containers can benefit **_from Rvalue reference based move constructor support_**, both for quickly moving heavy containers around and for moving the contents of those containers to new memory locations. The standard library components were upgraded with new C++11 language features where appropriate. These include, but are not necessarily limited to:
   * Rvalue references and the associated move support
   * Support for the UTF-16 encoding unit, and UTF-32 encoding unit Unicode character types
-  * 
-
+  * Variadic templates (couple with Rvalue references to allow for perfect forwarding)
+  * Compile-time constant expressions
+  * decltype
+  * explicit conversion operators
+  * default/delete functions
+  
+  Further, much time has passed since the prior C++ standard. Much code using the standard library has been writen. This has revealed parts of the standard libraries that could use some improving.
+  
+  Among the many areas of improvements considered were standard library allocators. A new scope-based model of allocators was included in C++11 to supplement the prior model.
 
 ### Threading facilities
+  While the C++03 language provides a memory 
 
 
 
