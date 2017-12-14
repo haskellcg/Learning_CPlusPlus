@@ -35,7 +35,64 @@
       }
   }
   ```
-
+  
+### Alternate type dedution on declaration  
+  In C++11, two methods of type deduction were added:
+  * auto was a way to create a variable of the appropriate type, base on a given expresion
+  * decltype was a way to compute the type of a given expression
+  
+  However, decltype and auto deduce types in different ways. In particular, **_auto always deduces a non-reference type_**, as though by using std::decay, while auto&& always deduces a reference type.
+  
+  However, decltype can be prodded into deducing a reference or non-reference type, based on the value category of the expression and the nature of the expression it is deducing:
+  ```c++
+  int i;
+  int &&f();
+  
+  auto x3a = i;    // decltype(x3a) is int
+  decltype(i) x3d = i;    // decltype(x3d) is int
+  auto x4a = (i);    // decltype(x4a) is int
+  decltype((i)) x4d = (i);    // decltype(x4d) is int &
+  auto x5a = f();    // decltype(x5a) is int
+  decltype(f()) x5d = f();    // decltype(x5d) is int &&
+  ```
+  
+  **_C++14 adds the decltype(auto) syntax. This allows auto declarations to use the decltype rules on the given expression_**. The decltype(auto) syntax can also be used with return type dedution, by using decltype(auto) syntax instead of auto for the function's return type dedution.
+  
+### Relaxed constexpr restrictions
+  C++11 introduced the concept of a constexpr-declared function, a function which could be executed at compile time. Their return value cound be consumed by operations that required constant expressions, such as an integer template argument. **_However, C++11 constexpr functions could only contains a single expression that is returned (as well as static_assert and a small number of other declarations)_**.
+  
+  C++14 relaxes these restrictions. Constexpt-declared functions may now contain the following:
+  * Any declarations except:
+    * static or thread_local variables
+    * Variable declarations without initializers
+  * The condition braching statements if and switch
+  * Any looping statement, including range-based for
+  * Expressions which change the value of an object if the lifetime of that object began within the constant expression function. This includes calls to any non-const constexpr-declared non-static member functions
+  
+  goto statements are forbidden in C++14 relaxed constexpr-declared functions.
+  
+  Also, C++11 stated that **_all non-static member functions that were declared constexpr were also implicitly declared const_**, with respet to this. That has since been removed; non-static member functions may be non-const. However, per the above restrictions, a non-const constexpr member function can only modify a class member if that object's lifttime began within the constant expression evaluation.
+  
+### Variable templates  
+  In prior version of C++, only functions, classes or type alias could be templated. **_C++14 now allows the creation of variables that are templated_**. An example given in the proposal is a variable pi that can be read to get the value pi for various types (e.g., 3 when read as integral type; the closest value possible with float, double, long long precision when read as float, double, long double, respectively).
+  
+  The usual rules of templates apply to such declarations and definitions, including specialization:
+  ```c++
+  template<typename T>
+  constexpr T pi = T(3.141592653589793238462643383);
+  
+  // Usual specialization rules apply
+  template<>
+  constexpr const char * pi<const char *> = "pi";
+  ```
+  
+### Aggregate member initialization
+  C++11 added member initializer, expressions to be applied to members at class scope if a constructor did not initializer the member itself. **_The definition of aggregates was changed to explicitly exclude any class with member initializer_**, therefore, they are not allowed to use aggregate initialization.
+  
+  C++14 relaxes this restriction, allowing aggregate initialization on such types. If the braced init list does not provide a value for that argument, the member initializer takes care of it.
+  
+  
+  
 
 
 
