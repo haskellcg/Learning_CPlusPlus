@@ -973,15 +973,52 @@
 ### Hash tables
   Including hash tables (unordered associative contains) in the C++ standard library is one of the most recurring requests. **_It was not adopted in C++03 due to time contraints only_**.
   
+  Collisions are managed only via **_linear chaining_** because the committee didnt consider it to be opportune to standardize solutions of **_open addressing_** that introduce quite a lot of intrinsic problems (above all when erasure of elements is admitted). 
   
+  The new library has four types of hash tables. They correspond to the four existing binary-search-tree based associative contianers, with an unordered_ prefix:
   
+  Type of Hash table|Associated values|Equivalent keys
+  ------------------|-----------------|---------------
+  std::unordered_set|No|No
+  std::unordered_multiset|No|Yes
+  std::unordered_map|Yes|No
+  std::unordered_multimap|Yes|Yes
   
-
+  This new feature didn't need any C++ language core extensions (though implementations will take advantages of various C++11 language features), only a small extension of the header <functional> and the introduction of header <unordered_set> and <unordered_map>.
+  
 ### Regular expressions
-
+  The new library, defined in the new header <regex>, is made of a couple of new classes:
+  * regular expression are represented by instance of the template class std::regex
+  * occurrences are represents by instance of the template class std::match_results
+  
+  The algorithms std::regex_search and std::regex_replace tak a regular expression and a string and write the occurrences found in the struct std::match_results:
+  ```c++
+  const char *reg_esp = "[ ,.\\t\\n;:]";
+  
+  // This is can be done using raw string literals:
+  // const char *reg_esp = R"regex([ ,.\t\n;:])regex"
+  
+  // regex is an instance of the template calss 'base_regex' with argument of type 'char'
+  std::regex rgx(reg_esp);
+  
+  // cmatch is an instance of the tamplate class 'match_results' with argument of type 'const char *'
+  std::cmatch match;
+  
+  const char *target = "Unseen University - Ankh-Morpork"
+  
+  if (std::regex_search(target, match, rgx)){
+      const size_t n = match.size();
+      for (size_t a = 0; a < n; a++){
+          std::string str(match[a].first, match[a].second);
+          std::count << str << "\n";
+      }
+  }
+  ```
+  
+  The library <regex> requires neither alternation of any existing header (though it will use them where appropriate) nor an extension of the core language. In POSIX C, regular expression are also available the C POSIX library#regex.h.  
 
 ### General-purpose smart pointers
-
+  C++11 provides std::unique_ptr, and improvements to std::shared_ptr and std::weak_ptr from TR1, std::auto_ptr is deprecated.
 
 ### Extension random number facility
   The C standard library provides the ability to generate pseudorandom number via the function **_rand_**. However, the algorithm is delegated entirely to the library vendor. **_C++ inherited this functionality with no changes, but C++11 provides a new method for generating pseudorandom numbers_**.
