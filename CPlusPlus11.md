@@ -861,24 +861,62 @@
 ---
 
 #### Control and query object alignment
+  C++11 allows variable alignment to be queried and controlled with **_alignof_** and **_alignas_**.
   
+  The alignof operator takes the type and returns the power of 2 byte boundary on which the type instances must be allocated (as a std::size_t). When given a reference type alignof returns **_the reference type's alignment_**; **_for arrays it returns the element type's alignment_**.
   
+  The alignas specifier controls the memory alignment for a available. The specifier takes a contant or a type; when supplied a type **_alignas(T)_** is shorthand for **_alignas(alignof(T))_**. 
   
+  For example, to specify that a clear array should be properlt aligned to hold a float:
+  ```c++
+  alignas(float) unsigned char c[sizeof(float)];
+  ```
   
+#### Allow garbage collected implementations
+  Prior C++ standard provided for programmer-driven garbage collection via **_set_new_handler_**, but gave no definition of object reachability for the purpose of automatic garbage collection.
   
+  C++11 defines conditions under which pointers values are "safely derived" from other values. An implementation may specify that it operats under **_strict pointer satety_**, in which case pointers that are not derived according to these rules can become invalid.
   
-  
-  
-  
-  
-  
+---
 
-
+#### Attributes
+  C++11 provides a standardized syntax for compiler/tool extensions to the language. **_Such extensions were traditionally specified using #pragma directive or vendor-specific keywords (like __attribute__ for GNU and __declspec for Microsoft)_**. With new syntax, added information can be **_specified in a form of an attribute enclose in double square brackets_**:
+  ```c++
+  int [[attr1]] i [[attr2, attr3]];
+  
+  [[attr4(arg1, arg2)]] if (coud){
+      [[vendor::attr5]] return i;
+  }
+  ```
+  
+  In general (but with some exceptions), an attribute specified for a named entity is placed after the name, and before the entity otherwise, as shown above, several attributes may be listed inside one pair of double square brackets, added arguments may be provided for an attribute, and attribute may be scoped by vendor-specific attribute namespace.
+  
+  **_It is recommended that attributes have no language semantic meaning and do not change the sense of a program when ignored_**. Attribute can be useful for providing information that, for example, helps the compiler to issue better diagnostic or optimize the generated code.
+  
+  C++ provides two standard attributes itself:
+  * noreturn, to specifiy that a function does not return
+  * carries_dependency, to help optimizing multi-threaded code by indicating that function arguments or return value carry a denpendency
 
 ## C++ standard library changes
+  A large part of the new library in the document **_C++ Standards Committee's Library Technical Report (TR1)_**, which was published in 2005. Various full and partial implementations of TR1 are currently available using the namespace std::tr1. 
+
 ### Updates to standard library components
+  Most standard library containers can benefit **_from Rvalue reference based move constructor support_**, both for quickly moving heavy containers around and for moving the contents of those containers to new memory locations. The standard library components were upgraded with new C++11 language features where appropriate. These include, but are not necessarily limited to:
+  * Rvalue references and the associated move support
+  * Support for the UTF-16 encoding unit, and UTF-32 encoding unit Unicode character types
+  * 
+
+
 ### Threading facilities
+
+
+
+
 ### Tuple types
+
+
+
+
 ### Hash tables
 ### Regular expressions
 ### General-purpose smart pointers
