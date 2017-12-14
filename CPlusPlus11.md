@@ -971,72 +971,76 @@
   * std::tuple_element<I, T>::type -- returns the type of the object number I of the tuple T
   
 ### Hash tables
+  Including hash tables (unordered associative contains) in the C++ standard library is one of the most recurring requests. **_It was not adopted in C++03 due to time contraints only_**.
+  
+  
+  
+  
+
 ### Regular expressions
+
+
 ### General-purpose smart pointers
+
+
 ### Extension random number facility
+
+
 ### Wrapper reference
+
+
 ### Polymorphic wrapper for function objects
+
+
 ### Type traits for metaprogramming
+
+
 ### Uniform method for computing the return type of function objects
 
+
+
 ## Improved C compatibility
+  For compatibility with C, from C99, these were added:
+  * Preprocessor:
+    * variadic marocs
+    * concatenation of adjacent narrow/wide string literals
+    * _Pragma() -- equivalent of #pragma
+  * long long  -- integer type that is at least 64 bits long
+  * \_\_func\_\_ -- macro evaluating to the name of the function it is in
+  * headers:
+    * cstdbool
+    * cstdint
+    * cinttypes
 
 ## Features originally planned but removed or not include
+  Heading for a separate TR:
+  * Modules
+  * Decimal types
+  * Math special function
+  
+  Postponed:
+  * Concepts
+  * More complete or required garbage collection support
+  * Reflection
+  * Macro scopes
 
 ## Features removed or deprecated
-
+  The term **_sequence point_** was removed, being replaced by specifying that either one operation is sequenced before another, or that two operations are unsequenced.
+  
+  The former use of the keyword export was removed, the keyword itself remains, being reserved for potential future use.
+  
+  Dynamic exception sepcification are deprecated. Compile-time specification of non-exception-throwing functions is available with noexcept keyword, which is useful for optimization.
+  
+  std::auto_ptr is deprecated, having been superseded by std::unique_ptr
+  
+  Function object base class (std::unary_function, std::binary_function), adapters to pointers to functions and adapters to pointers to members, and binder classes are all deprecated.
+  
 ## See also
 
 ## References
 
 ## External links
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  * [Online C++11 compiler](http://coliru.stacked-crooked.com)
   
 ## 参考:
   * [C++11 wiki](https://en.wikipedia.org/wiki/C++11)
