@@ -915,16 +915,61 @@
   Among the many areas of improvements considered were standard library allocators. A new scope-based model of allocators was included in C++11 to supplement the prior model.
 
 ### Threading facilities
-  While the C++03 language provides a memory 
-
-
-
-
+  While the C++03 language provides a memory model that supports threading, the primary support for actually using threading comes with the C++11 standard library:  
+  * A thread class: std::thread
+  * Thread join support: std::thread::join
+  * Access is provided: std::thread::native_handle
+  * For synchronization: std::mutex, std::recursive_mutex, std::condition_variable, std::condition_variable_any
+  * Resource Acquisition is Initialization (RAII) locks: std::lock_guard, std::unique_lock
+  * For high-performance: atomic operations on memory locations, memory barries
+  * The C++11 library also includes futures and promises for passing asynchronous results between threads
+  * The new std::async facility provides a convenient method of running tasks and tying them to a std::future
+  
 ### Tuple types
+  Tuples are collections composed of heterogeneous objects of pre-arranged dimensions. A tuple can be considered a generalization of a struct's member variables.
 
-
-
-
+  The C++11 version of the TR1 tuple type benefit from C++11 features like variadic templates.
+  
+  Using variadic templates, the declaration of the tuple class looks as follows:
+  ```c++
+  template<class ...Types>
+  tuple;
+  ```
+  
+  An example of definition and use of the tuple type:
+  ```c++
+  typedef std::tuple<int, double, long &, const char *> test_tuple;
+  long lengthy = 12;
+  test_tuple proof(18, 6.5, lengthy, "Ciao!");
+  
+  lengthy = std::get<0>(proof);
+  std::get<3>(proof) = " Beautiful!";
+  ```
+  
+  It is possible to assign a tuple to another tuple: if the 2 tuples' type are the same, each element type must prossess a copy constructor, otherwise, each element type of the right-ide tuple must be convertible to that of the corresponding elenment type of the left-side tuple or that the corresponding element type of the left-side tuple has a suitable constructor:
+  ```c++
+  typedef std::tuple<int, double, string> tuple_1 t1;
+  typedef std::tuple<char, double, const char *> tuple_2 t2('X', 2, "Hola");
+  
+  t1 = t2;    // OK, first two elements can be converted
+              // the third one can be constructed from a 'const char *'
+  ```
+  
+  **_std::make\_tuple to automatically create std::tuple using type dedution and auto helps to declare such a tuple. std::tie creates tuples of lvalue reference to help unpack tuples, std::ignore also helps here_**:
+  ```c++
+  auto record = std::make_tuple("Hari Ram", "New Delhi", 3.5, 'A');
+  std::string name;
+  float gpa;
+  char grade;
+  std::tie(name, std::ignore, gpa, garde) = record;
+      // std::ignore helps drop the place name
+  std::cout << name << ' ' << gpa << ' ' << grade << std:endl;
+  ```
+  
+  Two expressions are available to check a tuple's characteristics (only during compilation):
+  * std::tuple_size<T>::value -- returns the number of elements in the tuple T
+  * std::tuple_element<I, T>::type -- returns the type of the object number I of the tuple T
+  
 ### Hash tables
 ### Regular expressions
 ### General-purpose smart pointers
