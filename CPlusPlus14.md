@@ -159,7 +159,30 @@
 
 ## New standard library features
 ### Shared mutexes and locking
-
+  C++14 adds a shared timed mutex and a companion shared lock type.
+  
+### Heterogeneous lookup in associative container
+  **_C++14 allows the lookup to be done via an arbitrary type, so long as the comparison operator can compare that type with the actual key type_**. For the unordered containers, the hash function also needs to support the given key type such usual hashing invariant holds (i.e. object that compare as equal must also have equal hash values).
+  
+  This would allow a map from std::string to some value to compare against a const char * or any other type for which can operator< overload is available. It is also useful for indexing composite objects in a std::set by the value of a single member without forcing the use of find to create a dummy object.
+  
+  To preserve backwards compatibility, heterogeneous lookup is only allowed when a comparator given to the associative container allows it.
+  
+### Standard user-defined literals
+  C++11 defined the syntax for user-defined lietral suffixes, but the standard library did not use any of them. **_C++14 adds the following standard literals_**:
+  * "s", for creating the various std::basic_string types
+  * "h", "min", "s", "ms", "us", "ns", for creating the corresponding std::chrono::duration time literals
+  * "if", "i", "il", for creating the corresponding std::compex<float>, std::complex<double> and std::complex<long double> imaginary numbers
+  
+  ```c++
+  auto str = "hello world"s;
+  auto dur = 60s
+  auto z = 1i;
+  ```
+  
+  **_The two "s" literals do not interact, as the string one only operates on string literals, and the one for seconds operates only on numbers_**.
+  
+### Tuple addressing via type  
 
 
 
