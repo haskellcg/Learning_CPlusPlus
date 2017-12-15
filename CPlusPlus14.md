@@ -2,7 +2,6 @@
   C++14 is a version of the standard for the programming language C++. It is intended to be small extension over C++11, featuring mainly bug fixes and small improvements. Its approval was announced on August 18, 2014. C++14 was released on December 15, 2014.
   
 ## New language features  
-
 ### Function return type dedution
   C++11 allowed lambda functions to deduce the return type based on the type of the expression given to the return statement. C++14 **_provides this ability to all functions_**. It also extends these facilities to lambda functions, allowing return type dedution for functions that are not of the form **_return expression_**.
   
@@ -126,8 +125,40 @@
   **_Generic lambdas are essentially templated functor lambdas_**.
   
 ### Lambda capture expressions  
+  C++11 lambda functions capture variables declared in their outer scope by value-copy or by reference. This means that value members of a lambda **_cannot be move-only types_**. C++14 allows captured members to be initialized with arbitrary expressions. This allow both capture by value-move and declaring arbitrary members of the lambda, without having a corresponding  named variable in an outer scope.
+  
+  This is done via the use of an initializer expression:
+  ```c++
+  auto lambda = [value = 1] {return value};
+  ```
+  
+  The lambda function lambda returns 1, which is what value was initialized with. 
+  
+  This can be used to capture by move, via the use of the standard std::move:
+  ```c++
+  std::unique_ptr<int> ptr(new int(10));
+  auto lambda = [value = std::move(ptr)] {return *value};
+  ```
+  
+### The attribute [[deprecated]]
+  The deprecated attribute allows marking an entity deprecated, which **_make it still legal to use but puts users on notice that use is discouraged and may cause a warning message to be printed during compilation_**. An option string literal can appear as the argument of deprecated, to explain the rationate for deprecation and/or to suggest a replacement.
+  ```c++
+  [[deprecated]] int f();
+  
+  [[deprecated("g() is thread-safe. Use h() instead")]]
+  void g(int &x);
+  
+  void h(int &x);
+  
+  void test()
+  {
+      int a = f();
+      g();
+  }
+  ```
 
-
+## New standard library features
+### Shared mutexes and locking
 
 
 
