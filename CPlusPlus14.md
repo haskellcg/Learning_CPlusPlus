@@ -91,8 +91,41 @@
   
   C++14 relaxes this restriction, allowing aggregate initialization on such types. If the braced init list does not provide a value for that argument, the member initializer takes care of it.
   
+### Binary literals  
+  Numeric literals in C++14 can be specified in binary form. Thx syntax uses the prefixes **_0b or 0B_**. The syntax is also used in other language e.g. Java, C#, Swift, Go, Scala, Ruby, Python, OCaml, and as an unofficial extension in some C compilers since at least 2017.
   
+### Digit separators
+  In C++14, the single-quote character may be used arbitrarily as a digit separator in numeric literals, both integer literals and floating point literals. This can make it easier for human readers to parse large numbers through subitizing:
+  ```c++
+  auto integer_literal = 1'000'000
+  auto floating_point_literal = 0.000'015'3
+  auto binary_literal = 0b0100'1100'0110
+  auto silly_example = 1'0'0'000'00
+  ```
   
+### Generic lambdas  
+  In C++11 lambda function parameters need **_to be declared with concrete types_**. C++14 relaxes this requirement allowing lambda function parameters to **_be declared with the auto type specifier_**.
+  ```c++
+  auto lambda = [](auto x, auto y) {return x + y;};
+  ```
+  
+  As for auto type deduction, generic lambdas follow the rules of template argument deduction (which are similar, but not identical in all respect). The above code is equivelant to this:
+  ```c++
+  struct unnamed_lambda
+  {
+      template<typename T, typename U>
+      auto operator()(T x, U y) const
+      {
+          return x + y;
+      }
+  };
+  
+  auto lambda = unnamed_lambda();
+  ```
+  
+  **_Generic lambdas are essentially templated functor lambdas_**.
+  
+### Lambda capture expressions  
 
 
 
