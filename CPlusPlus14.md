@@ -204,12 +204,17 @@
   * The std::quoted stream I/O manipulator allows inserting and extracting strings with embeded spaces, by placing delimiters (default to double-quotes) on output and stripping them on input, and escaping any embeded delimiters
   
 ## Compiler support  
+  Clang finished support for C++14 in 3.4 though under the standard name C++1y.
+  
+  GCC finished support for C++14 in GCC 5, and make C++14 the default C++ standard in GCC 6
+  
+  Microsoft Visual Studio 2017 also has implemented "almost all" C++14 features
 
+## See also
 
+## References
 
+## External links
 
-
-
-
-## 参考:
+## My References:
   * [C++14 wiki](https://en.wikipedia.org/wiki/C++14)
