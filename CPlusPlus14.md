@@ -183,8 +183,27 @@
   **_The two "s" literals do not interact, as the string one only operates on string literals, and the one for seconds operates only on numbers_**.
   
 ### Tuple addressing via type  
-
-
+  The std::tuple type introduced in C++11 allows an aggregate of typed values to be indexed by a compile-time constant integer. C++14 extends this to allow fetching from a tuple by type instead of by index.
+  
+  **_If the tuple has more than one element of the type, a compile-time error results_**:
+  ```c++
+  tuple<string, string, int> t("foo", "bar", 7);
+  int i = get<int>(t);
+  int j = get<2>(t);
+  string s = get<string>(t);
+  ```
+  
+### Smaller library features 
+  * **_std::make\_unique_** can be used like **_std::make\_shared_** for **_std::unique\_ptr_** objects
+  * **_std::integral\_constant_** gained an operator() overload to return the constant value
+  * The class template **_std::integer\_sequence_** and related alias templates were added for representing compile-time integer sequences, such as the indices of elements in a parameter pack
+  * The global **_std::begin/std::end_** functions were argumented with **_std::cbegin/std::cend_** functions, which return constant iterators, and **_std::rbegin/std::rend_** and **_std::crbegin/std::crend_** which return reverse iterators
+  * The **_std::exchange_** function assigns a new value to a variable and returns the old value
+  * New overloads of **_std::equal, std::mismatch, std::is_permutation_** take a pair of iterators for the second range, so that the caller does not need to separatelt check that two ranges are of the same length
+  * The **_std::is\_final_** type trait detects if a class is marked final
+  * The std::quoted stream I/O manipulator allows inserting and extracting strings with embeded spaces, by placing delimiters (default to double-quotes) on output and stripping them on input, and escaping any embeded delimiters
+  
+## Compiler support  
 
 
 
