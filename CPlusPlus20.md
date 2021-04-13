@@ -40,3 +40,6 @@
 ## My References
   * [C++ 20](https://en.wikipedia.org/wiki/C++20)
   * [C++ Standards Committee Papers](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/)
+  * [C++协程](https://mp.weixin.qq.com/s?__biz=MzAxODI5ODMwOA==&mid=2666553202&idx=2&sn=bbde0de4ae0c12c06021d7adbd5e9e6f&chksm=80dc9bd9b7ab12cf767906343cd0a921e6d5066b068d4e1e4b75a5be50f0427a6517e71253b6&xtrack=1&scene=0&subscene=91&sessionid=1618288935&clicktime=1618289021&enterid=1618289021&ascene=7&devicetype=android-29&version=2800023d&nettype=WIFI&abtest_cookie=AAACAA%3D%3D&lang=en&exportkey=A1O4NST5MhT2FKZM9ivF7%2BM%3D&pass_ticket=ntCHoJHsVL9uAifMjtFX%2BqOaQe3n1MtJYgiiBqn2mQGzMNdmyA2Y0yCAHwHFovfK&wx_header=1)
+  * [C++ Coroutine in FB](https://github.com/facebook/folly/tree/master/folly/experimental/coro)
+  * [C++ 20新特性](https://mp.weixin.qq.com/s?__biz=MzAxODI5ODMwOA==&mid=2666553211&idx=2&sn=cf1564f1c58f63879478b7797e964379&chksm=80dc9bd0b7ab12c61374297927789cea953f7538ce58585a9c287eadff6b58c12ab381952ed0&&xtrack=1&scene=0&subscene=91&sessionid=1618288935&clicktime=1618288941&enterid=1618288941#rd)
